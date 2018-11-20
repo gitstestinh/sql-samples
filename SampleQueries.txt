@@ -1,0 +1,44 @@
+
+/*This will view everything in the table - first part is schema, second is table*/
+EXEC sp_help 'Production.TransactionHistory'
+
+SELECT TransactionId, ProductId, Quantity, ActualCost, 'Batch 1' AS BatchId, (Quantity * ActualCost) AS TotalCost
+FROM Production.TransactionHistory
+
+SELECT SCHEMA_NAME(schema_id) AS [Schema], name
+FROM sys.views
+
+/*How to look at available views in database*/
+SELECT *
+FROM [Sales].[vStoreWithAddresses]
+
+/*DISTINCT AND TOP*/
+SELECT DISTINCT TOP 200 [sod].[CarrierTrackingNumber]
+FROM [Sales].[SalesOrderDetail] AS [sod]
+ORDER BY [CarrierTrackingNumber]
+
+SELECT [sod].[ProductID], SUM([sod].OrderQty) AS 'OrderQty'
+FROM [Sales].SalesOrderDetail AS [sod]
+GROUP BY [sod].[ProductID]
+ORDER BY [sod].[ProductID]
+
+/* YOU CAN DO MULTIPLE NESTED GROUP BYS AND ORDER BYS. This will first group by Product ID, 
+and then inside of that group by SpecialOfferId. Same with the order*/
+SELECT [sod].[ProductID], [sod].[SpecialOfferID], SUM([sod].OrderQty) AS 'OrderQty'
+FROM [Sales].SalesOrderDetail AS [sod]
+GROUP BY [sod].[ProductID], [sod].[SpecialOfferID]
+ORDER BY [sod].[ProductID], [SpecialOfferID]
+
+/* This is an example of the HAVING clause. HAVING is like WHERE but only used with groups*/
+SELECT [sod].[ProductID], [sod].[SpecialOfferID], SUM([sod].OrderQty) AS 'TOTAL_QTY'
+FROM [Sales].[SalesOrderDetail] AS [sod]
+GROUP BY [sod].ProductID, [sod].[SpecialOfferID]
+HAVING [sod].[SpecialOfferID] IN (1,2,3)
+ORDER BY [sod].[ProductID], [sod].[SpecialOfferID]
+
+/* This is an example of paging*/
+SELECT [e].[FirstName], [e].LastName, [e].[AddressLine1]
+FROM [HumanResources].[vEmployee] AS [e]
+ORDER BY [e].LastName, [e].FirstName
+OFFSET 24 ROWS
+FETCH NEXT 6 ROWS ONLY
