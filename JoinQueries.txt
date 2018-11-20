@@ -47,3 +47,19 @@ ON so.SpecialOfferID = sod.SpecialOfferID
 	AND sod.ModifiedDate < so.EndDate
 	AND sod.ModifiedDate >= so.StartDate
 WHERE so.SpecialOfferID > 1
+
+/*You can also join on multiple columns*/
+
+SELECT p.FirstName + ' ' + p.LastName AS 'Name', a.EmailAddress
+FROM [Person].[Person] p
+LEFT OUTER JOIN [Person].[EmailAddress] a
+ON (p.BusinessEntityID = a.BusinessEntityID AND CHARINDEX(LOWER(p.FirstName), LOWER(a.EmailAddress)) > 0)
+
+/*You can join more than two tables*/
+SELECT [p].[Name] AS 'Product', [pc].[Name] AS 'Category', [pcs].[Name] AS 'Sub Category'
+FROM [Production].[Product] p
+INNER JOIN [Production].[ProductSubcategory] pcs
+	ON p.ProductSubcategoryID = pcs.ProductSubcategoryID
+INNER JOIN [Production].[ProductCategory] pc
+	ON pcs.ProductCategoryID = pc.ProductCategoryID
+ORDER BY Category, [Sub Category], Product
