@@ -1,0 +1,49 @@
+/*this is an inner join - INNER JOINS ONLY RETURN ROWS 
+THAT MATCH BETWEEN THE TWO RESULT SETS (HERE, WHERE BOTH HAVE PRODUCT ID)*/
+
+SELECT p.name AS 'ProductName', od.ProductID, od.SalesOrderDetailID, od.OrderQty 
+FROM [Production].[Product] as p
+INNER JOIN [Sales].[SalesOrderDetail] as od
+ON od.ProductID = p.ProductID
+ORDER BY p.Name, od.SalesOrderDetailID
+
+/*LEFT OUTER JOIN returns values from left table that match the right and also rows from the left that do not match*/ 
+/*RIGHT OUTER JOIN returns values from right table that match the left and also rows from the right that do not match*/ 
+
+SELECT p.name AS 'ProductName', od.ProductID, od.SalesOrderDetailID, od.OrderQty 
+FROM [Production].[Product] as p
+LEFT OUTER JOIN [Sales].[SalesOrderDetail] as od
+ON od.ProductID = p.ProductID
+ORDER BY p.Name, od.SalesOrderDetailID
+
+
+/* FOR JOINS, YOU CAN PUT PREDICATES IN THE ON CLAUSE*/
+SELECT p.name AS 'ProductName', od.ProductID, od.SalesOrderDetailID, od.OrderQty 
+FROM [Production].[Product] as p
+LEFT OUTER JOIN [Sales].[SalesOrderDetail] as od
+ON od.ProductID = p.ProductID AND od.OrderQty > 2
+ORDER BY p.Name, od.OrderQty
+
+/*BUT ALSO IN WHERE CLAUSE, which is logically different and will filter out the nulls*/
+SELECT p.name AS 'ProductName', od.ProductID, od.SalesOrderDetailID, od.OrderQty 
+FROM [Production].[Product] as p
+LEFT OUTER JOIN [Sales].[SalesOrderDetail] as od
+ON od.ProductID = p.ProductID
+WHERE od.OrderQty > 2
+ORDER BY p.Name, od.OrderQty
+
+
+/*you can join a table to itself (client and sub client)*/
+SELECT e.BusinessEntityID, e.HireDate, e.ManagerId, m.HireDate
+FROM [HumanResources].[Employee] AS e
+LEFT OUTER JOIN [HumanResources].[Employee] as m
+ON e.ManagerId = m.BusinessEntityID
+
+/* you can also do joins with >, < etc*/
+SELECT sod.SalesOrderDetailID, sod.ProductId, sod.ModifiedDate, sod.OrderQty, so.StartDate, so.EndDate, so.Description 
+FROM [Sales].[SalesOrderDetail] as sod
+INNER JOIN [Sales].[SpecialOffer] AS so
+ON so.SpecialOfferID = sod.SpecialOfferID
+	AND sod.ModifiedDate < so.EndDate
+	AND sod.ModifiedDate >= so.StartDate
+WHERE so.SpecialOfferID > 1
