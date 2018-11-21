@@ -1,0 +1,51 @@
+/*WHEN INSERTING INTO A TABLE, use the OUTPUT keyword to return the newly created entry*/
+INSERT INTO [HumanResources].[Department]
+	([Name], [GroupName])
+OUTPUT INSERTED.DepartmentID, INSERTED.Name, inserted.GroupName
+VALUES ('Chumping33', 'Publications');
+
+
+/*You can insert multiple rows at once*/
+
+INSERT INTO [Production].[Culture]
+	([CultureID],[Name], [ModifiedDate])
+	OUTPUT inserted.ModifiedDate
+	VALUES 
+		('af', 'Afrikaans', DEFAULT),
+		('de', 'German', DEFAULT),
+		('sd', 'Sindhi', DEFAULT);
+
+
+/*BASIC UPDATE - YOU CAN UPDATE MULTIPLE VALUES AT ONCE*/
+
+UPDATE [Production].[Product]
+	SET [SellEndDate] = '12/31/2018',
+		[ModifiedDate] = GETDATE()		
+
+/* You can specify which rows to update using joins */
+
+UPDATE [p]
+SET [EmailPromotion] = 2
+FROM [Person].[Person] as [p]
+	INNER JOIN [Person].[BusinessEntityAddress] AS [bea]
+	ON bea.[BusinessEntityID] = p.BusinessEntityID
+	INNER JOIN [Person].[Address] AS a
+	ON bea.AddressID = a.AddressID
+	WHERE [a].City = 'Darmstadt'
+
+/* For single values, you can update using subqueries */
+
+UPDATE [Production].[ProductListPriceHistory]
+SET [ListPrice] =   (
+						SELECT MIN([ListPrice])
+						FROM [Production].[ProductListPriceHistory]
+						WHERE [ProductID]=707
+		            )
+WHERE ([ProductID] = 708 AND [EndDate] IS NULL)
+
+/*CAN DELETE WITH FROM CLAUSE TO SPECIFY JOINS*/
+DELETE [bec]
+	FROM [Person].[BusinessEntityContact] AS [bec]
+	INNER JOIN [Sales].[Store] AS [s]
+	ON [bec].BusinessEntityID = [s].[BusinessEntityID]
+WHERE [s].[Name] IN ('Clamps & Brackets Co.', 'Fitness Toys')
