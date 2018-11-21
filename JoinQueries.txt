@@ -85,3 +85,32 @@ WHERE soh.SalesOrderID IN
 		WHERE soh.SalesOrderID = sod.SalesOrderID AND
 		sod.OrderQty > 2
 	)
+
+/* You can join two queries together with the union operator*/
+
+SELECT ProductId, UnitPrice
+FROM [Sales].[SalesOrderDetail]
+WHERE ProductID BETWEEN 1 AND 799
+UNION 
+SELECT ProductId, UnitPrice
+FROM [Sales].[SalesOrderDetail]
+WHERE ProductID BETWEEN 900 AND 1000
+
+/* INTERSECT FINDS THE OVERLAP BETWEEN TWO QUERIES*/
+SELECT DISTINCT ProductId
+FROM [Sales].[SalesOrderDetail]
+WHERE ProductID BETWEEN 700 AND 1000
+INTERSECT
+SELECT DISTINCT ProductId
+FROM [Sales].[SalesOrderDetail]
+WHERE ProductID BETWEEN 800 AND 1000
+
+/*EXCEPT GETS WHAT IS IN THE LEFT SET BUT NOT THE RIGHT SET*/
+
+SELECT DISTINCT ProductId
+FROM [Sales].[SalesOrderDetail]
+WHERE ProductID BETWEEN 700 AND 1000
+EXCEPT
+SELECT DISTINCT ProductId
+FROM [Sales].[SalesOrderDetail]
+WHERE ProductID BETWEEN 800 AND 1000
