@@ -63,3 +63,25 @@ INNER JOIN [Production].[ProductSubcategory] pcs
 INNER JOIN [Production].[ProductCategory] pc
 	ON pcs.ProductCategoryID = pc.ProductCategoryID
 ORDER BY Category, [Sub Category], Product
+
+
+/*You can create sub queries and join on them*/
+
+SELECT sod.SalesOrderDetailID, sod.SalesOrderID, innerSelect.SalesPersonID
+FROM [Sales].[SalesOrderDetail] as sod
+INNER JOIN (SELECT SalesOrderID, SalesPersonID
+			FROM [Sales].[SalesOrderHeader]
+			WHERE AccountNumber = '10-4020-000510') AS innerSelect
+ON sod.SalesOrderID = innerSelect.SalesOrderID
+
+/*Another example of a sub query*/
+
+SELECT DISTINCT soh.AccountNumber
+FROM [Sales].[SalesOrderHeader] as soh
+WHERE soh.SalesOrderID IN 
+	(
+		SELECT SalesOrderID
+		FROM [Sales].[SalesOrderDetail] as sod
+		WHERE soh.SalesOrderID = sod.SalesOrderID AND
+		sod.OrderQty > 2
+	)
