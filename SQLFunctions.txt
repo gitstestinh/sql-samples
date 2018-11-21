@@ -1,0 +1,85 @@
+/* Example of avg function*/
+
+SELECT p.Name AS 'ProductName', AVG(pin.Quantity) AS 'AVG QTY'
+FROM [Production].[Product] AS p
+INNER JOIN [Production].[ProductInventory] AS pin
+	ON p.ProductID = pin.ProductID
+	GROUP BY p.Name
+	ORDER BY p.Name
+
+
+/*Example of count function*/
+
+SELECT Count(*) AS 'RowCount'
+FROM [Production].[Product] AS p
+
+/*Count by  group*/
+
+SELECT p.Name, Count(pin.Shelf) AS 'ShelfCount'
+FROM [Production].[Product] AS p
+INNER JOIN [Production].[ProductInventory] as pin
+	ON p.ProductID = pin.ProductID
+GROUP BY p.Name
+ORDER BY ShelfCount DESC
+
+/*Sum within groups*/
+
+SELECT l.Name, Sum(Quantity) AS LocationQuantity
+FROM [Production].[ProductInventory] pin
+INNER JOIN [Production].[Location] AS l 
+	ON pin.LocationID = l.LocationID
+GROUP BY l.Name
+ORDER BY l.Name
+
+/*Std Deviation*/
+SELECT STDEVP(ListPrice) AS STDEVListPrice
+FROM [Production].[ProductListPriceHistory]
+
+/*you can parse and convert - both parse and try parse are available. Try Parse will return null if error*/
+
+SELECT TRY_PARSE('12/31/2018' AS date USING 'en-US') AS YearEndDate;
+
+/*You can get date  times*/
+
+SELECT GETUTCDATE() AS 'UTC NOW'
+
+/*You can calculate the difference between two dates - this gets diff in hours*/
+
+SELECT DATEDIFF(hh, '1/1/2006', '1/4/2007') AS 'DateDiff'
+
+/*IIF functons provides a boolean operator*/
+
+SELECT pch.ProductID, pch.StartDate, 
+	IIF(pch.StartDate BETWEEN '12/31/2010' AND '1/1/2012', 'K-Tech Ownership', 'Big Baller Ownership') AS 'Owner'
+FROM [Production].[ProductCostHistory] as pch
+ORDER BY pch.StartDate;
+
+/*Case function is available*/
+SELECT pch.ProductID, pch.StartDate, pch.StandardCost,
+	CASE pch.ProductID
+		WHEN 707 THEN 'Platinum collection'
+		WHEN 711 THEN 'Silver collection'
+		WHEN 713 THEN 'Gold collection'
+		ELSE 'Standard Product'
+	END AS 'Collection' 
+FROM [Production].[ProductCostHistory] as pch
+ORDER BY Collection;
+
+
+/*Can use ISNULL to replace null values*/
+SELECT p.Name, ISNULL(p.Color, 'Unknown') AS Color
+FROM [Production].[Product] as p
+ORDER BY Color
+
+/*Can use the LEN function to get the length of a given string*/
+
+SELECT p.Name, LEN(p.Name) AS 'Name Length'
+FROM [Production].[Product] AS p
+ORDER BY LEN(p.Name) DESC
+
+/* use char index to find index in string*/
+ 
+ SELECT DISTINCT pd.Description
+ FROM [Production].[ProductDescription] as pd
+ WHERE CHARINDEX('alloy', pd.[Description]) > 0 
+
